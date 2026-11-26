@@ -1,0 +1,95 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<meta charset="utf-8">
+<title>B3D Malzeme ve Balistik</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22%3E%3Crect width=%2240%22 height=%2240%22 rx=%2210%22 fill=%22%231d5fd1%22/%3E%3C/svg%3E">
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Tek ekran kabuk: ince üst şerit (ad, iki bölüm, tek geçiş düğmesi, aktarım durumu) ve altında tam boy bölüm çerçevesi */
+:root{
+  --bg:#eef1f4; --bar:#0f1b2a; --bar-fg:#e6eefb; --muted:#8ea3ba; --accent:#5b9bff; --ok:#3fbf86; --line:#1e2d40;
+  --font:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'IBM Plex Mono',ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#0b131d;--bar:#0a121c;--bar-fg:#e6eefb;--muted:#8ea3ba;--accent:#7ab0ff;--ok:#4fd39a;--line:#1b2a3c;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0b131d;--bar:#0a121c;--bar-fg:#e6eefb;--muted:#8ea3ba;--accent:#7ab0ff;--ok:#4fd39a;--line:#1b2a3c;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);font-family:var(--font);display:flex;flex-direction:column;overflow:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bar);z-index:10}
+header{background:var(--bar);color:var(--bar-fg);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding-block:8px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.brand{font-weight:700;font-size:.95rem;letter-spacing:.2px;white-space:nowrap}
+.brand small{display:block;font-weight:500;font-size:.7rem;color:var(--muted);letter-spacing:.6px;text-transform:uppercase}
+.steps{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.step{font:inherit;font-size:.84rem;color:var(--muted);display:flex;align-items:center;gap:6px;background:transparent;border:0;padding:4px 6px;border-radius:6px;cursor:pointer}
+.step:focus-visible{outline:3px solid var(--bar-fg);outline-offset:1px}
+.step b{font-family:var(--mono);font-size:.72rem;border:1px solid var(--muted);border-radius:50%;width:1.35rem;height:1.35rem;display:inline-flex;align-items:center;justify-content:center}
+.step.on{color:var(--bar-fg);font-weight:600}.step.on b{background:var(--accent);border-color:var(--accent);color:var(--bar)}
+#go{font:inherit;font-weight:600;font-size:.85rem;background:var(--accent);color:var(--bar);border:none;border-radius:8px;padding:7px 14px;cursor:pointer;white-space:nowrap}
+#go:focus-visible{outline:3px solid var(--bar-fg);outline-offset:2px}
+.lang{display:flex;border:1px solid var(--muted);border-radius:8px;overflow:hidden}.lang button{font:inherit;font-size:.78rem;font-weight:600;background:transparent;color:var(--muted);border:0;padding:5px 10px;cursor:pointer}.lang button[aria-pressed="true"]{background:var(--accent);color:var(--bar)}.lang button:focus-visible{outline:3px solid var(--bar-fg);outline-offset:-3px}
+#stat{font-size:.78rem;color:var(--muted);min-width:0;flex:1 1 220px;text-align:right}
+#stat.ok{color:var(--ok)}
+main{flex:1;min-height:0;position:relative}
+iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+@media (max-width:640px){#stat{text-align:left;flex-basis:100%}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<header>
+  <div class="brand">B3D Malzeme ve Balistik<small>Material Creator 3.6.0 · Balistik Darbe Simülatörü 2.10.1</small></div>
+  <div class="steps" aria-label="Bölümler">
+    <button type="button" class="step" id="sMC" data-s="mc"><b>1</b>Malzeme (MC)</button>
+    <button type="button" class="step" id="sBS" data-s="bs"><b>2</b>Balistik (BS)</button>
+  </div>
+  <button id="go" type="button">Balistiğe geç</button>
+  <div class="lang" role="group" aria-label="Arayüz dili" data-noi18n><button type="button" data-l="tr">TR</button><button type="button" data-l="en">EN</button></div>
+  <div id="stat" role="status">Malzemeleri MC'de hazırla; BS'ye geçince kütüphaneye aktarılır.</div>
+</header>
+<main>
+  <iframe id="fMC" src="mc.html" title="B3D Material Creator"></iframe>
+  <iframe id="fBS" src="bs.html" title="Balistik Darbe Simülatörü" hidden></iframe>
+</main>
+<script>
+(function(){
+  const fMC=document.getElementById('fMC'),fBS=document.getElementById('fBS'),go=document.getElementById('go'),stat=document.getElementById('stat');
+  const lsGet=k=>{try{return localStorage.getItem(k);}catch(e){return null;}},lsSet=(k,v)=>{try{localStorage.setItem(k,v);return true;}catch(e){return false;}};
+  const SEC=['mc','bs'];
+  let cur=SEC.includes(lsGet('b3dbs.kabuk.bolum'))?lsGet('b3dbs.kabuk.bolum'):'mc';
+  function say(t,ok){stat.textContent=t;stat.className=ok?'ok':'';}
+  /* MC kütüphanesini BS'ye aktarır: mc.catalog.v1 (bds.mccatalog.v1) ve LS-DYNA ile BS model girdileri (bds.mcmodel.v1) */
+  function aktar(){
+    let b=null;
+    try{b=fMC.contentWindow&&fMC.contentWindow.MC_BRIDGE?fMC.contentWindow.MC_BRIDGE():null;}catch(e){say('MC okunamadı: '+e.message);return;}
+    if(!b){say('MC henüz yüklenmedi; birkaç saniye sonra yeniden geç.');return;}
+    lsSet('bds.mccatalog.v1',JSON.stringify(b.catalog));lsSet('bds.mcmodel.v1',JSON.stringify(b.models));
+    let r=null;
+    try{r=fBS.contentWindow&&fBS.contentWindow.BS_API?fBS.contentWindow.BS_API.mcSync():null;}catch(e){}
+    const n=b.catalog.materials.length,nm=Object.keys(b.models).length;
+    say(r?`MC'den ${n} malzeme aktarıldı; ${r.cards.length} tanesi BS model girdileriyle kütüphanede.`:`MC'den ${n} malzeme hazır (${nm} model girdili); BS açılınca kütüphaneye alınır.`,true);
+  }
+  const NEXT={mc:'bs',bs:'mc'},GOTXT={mc:'Balistiğe geç',bs:'Malzemeye dön'};
+  function show(s){
+    cur=s;lsSet('b3dbs.kabuk.bolum',s);
+    fMC.hidden=s!=='mc';fBS.hidden=s!=='bs';
+    [['sMC','mc'],['sBS','bs']].forEach(([id,k])=>{const e=document.getElementById(id);e.classList.toggle('on',s===k);e.setAttribute('aria-current',s===k?'page':'false');});
+    go.textContent=GOTXT[s];
+    if(s!=='mc')aktar();else say("Malzemeleri MC'de hazırla; BS'ye geçince kütüphaneye aktarılır.");
+  }
+  go.addEventListener('click',()=>show(NEXT[cur]));
+  document.querySelectorAll('.step[data-s]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.s)));
+  /* 3.5.1: arayüz dili; seçim iki modüle ve kabuğa uygulanır, localStorage 'b3d.lang' ile hatırlanır */
+  const langBtns=[...document.querySelectorAll('.lang button')];
+  function setLang(l){ l=l==='en'?'en':'tr'; lsSet('b3d.lang',l); langBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===l)));
+    for(const w of [window,fMC.contentWindow,fBS.contentWindow]){ try{ if(w&&w.B3D_I18N) w.B3D_I18N.set(l); }catch(e){} } }
+  langBtns.forEach(b=>b.addEventListener('click',()=>setLang(b.dataset.l)));
+  langBtns.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.l===(lsGet('b3d.lang')==='en'?'en':'tr'))));
+  window.B3D_SET_LANG=setLang;
+  fBS.addEventListener('load',()=>{if(cur==='bs')setTimeout(aktar,1500);});
+  fMC.addEventListener('load',()=>{if(cur==='bs')setTimeout(aktar,2500);});
+  show(cur);
+})();
+</script>
+
+<script src="i18n.js"></script>
+
+</body></html>
