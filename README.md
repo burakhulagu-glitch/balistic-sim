@@ -6,8 +6,8 @@ yerel deposunda tutulur.
 
 | Program | Sürüm | Dosya | Ne yapar |
 |---|---|---|---|
-| Material Creator (MC) | 3.8.0 | `mc.html` | Kompozit, hücresel ve kafes malzemeleri homojenleştirir: tek yönlü tabaka, partikül, kısa elyaf, dokuma kumaş, petek ve kafes modülleri; kafeslerde ısıl iletkenlik. Taşınabilir malzeme kartı üretir. |
-| Ballistic Simulator (BS) | 2.12.1 | `bs.html` | Analitik çok atışlı delinme modeli: metal katmanlarda kesme tıkacı, kompozit katmanlarda Wen bağıntısı, seramiklerde Tate modeli. V50, artık hız, NIJ ön değerlendirmesi ve hız ile enerji zaman geçmişi. |
+| Material Creator (MC) | 3.8.1 | `mc.html` | Kompozit, hücresel ve kafes malzemeleri homojenleştirir: tek yönlü tabaka, partikül, kısa elyaf, dokuma kumaş, petek ve kafes modülleri; kafeslerde ısıl iletkenlik. Taşınabilir malzeme kartı üretir. |
+| Ballistic Simulator (BS) | 2.12.2 | `bs.html` | Analitik çok atışlı delinme modeli: metal katmanlarda kesme tıkacı, kompozit katmanlarda Wen bağıntısı, seramiklerde Tate modeli. V50, artık hız, NIJ ön değerlendirmesi ve hız ile enerji zaman geçmişi. |
 
 `index.html` iki programı açan kabuk sayfadır.
 
