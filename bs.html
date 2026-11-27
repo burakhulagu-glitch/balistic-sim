@@ -927,7 +927,8 @@ button.fire.resume{background:var(--green);border-color:var(--green);color:#fff;
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-const fmt=(x,d=1)=>Number(x).toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
+/* Ekranda gercek eksi isareti (U+2212) kullanilir; disa aktarilan CSV ve JSON ASCII kalir. */
+const fmt=(x,d=1)=>Number(x).toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/-/g,"−");
 const pct=(x,d=1)=>"%"+fmt(x*100,d);
 const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -997,7 +998,7 @@ const NU=0.3,G=9.81,RHO_AIR=1.225,MUZZLE=new THREE.Vector3(0,1.2,0),GUN_MASS=0.7
 /* ---------- physics ---------- */
 const isNum=x=>typeof x==="number"&&isFinite(x);
 /* ---------- veri sözleşmesi, sürüm, doğrulama ve göç (v2) ---------- */
-const APP_VERSION="2.12.1",LIB_SCHEMA="bds.material.v2",APP_DATE="26 Kasım 2026";
+const APP_VERSION="2.12.2",LIB_SCHEMA="bds.material.v2",APP_DATE="27 Kasım 2026";
 const REMOVED_KEYS=["stf","mx","stfmx"];
 const THESIS_RE=/\btez\b|\bthesis\b|doktora|STF|MXene/i,THESIS_STRICT=/\btez\b|\bthesis\b|doktora/i;
 const OLD_CAL_FAKE=[{proj:"hg9",t:6,v:540},{proj:"hg9",t:8,v:620},{proj:"hg44",t:8,v:575}];
@@ -1680,7 +1681,7 @@ const revolverL=new THREE.Group();
 }
 revolverL.position.copy(MUZZLE);scene.add(revolverL);
 
-/* M1 Garand for .30 06 M2 AP */
+/* semi-automatic rifle for .30 06 M2 AP */
 const garand=new THREE.Group();
 {
   const g=garand,bl=cyl(0.0085,0.0108,0.62,GM.park,24);bl.position.z=-0.31;g.add(bl);
@@ -1803,7 +1804,7 @@ const tennis=new THREE.Group();
 tennis.position.copy(MUZZLE);scene.add(tennis);
 const GUN_CLASS={pistol:"pistol",revolver:"revolver",revolverL:"revolver",rifle:"rifle",ak:"rifle",ar15:"rifle",m4:"rifle",garand:"rifle",gasgun:"gasgun",ballgun:"gasgun",launcher:"launcher",tennis:"launcher"};
 const gcls=k=>GUN_CLASS[k]||k;
-const GUN_NAME={pistol:"Yarı otomatik tabanca",revolver:"Revolver, 4 inç",revolverL:"Büyük gövdeli revolver, 6,5 inç",rifle:"Sürgülü keskin nişancı tüfeği",ak:"AK tipi tüfek",ar15:"AR 15 A2 tüfek",m4:"M4 tipi karabina",garand:"M1 Garand",gasgun:"Gaz tabancası",ballgun:"Pnömatik bilye atıcı",launcher:"Pnömatik top atıcı",tennis:"Tenis topu atış makinesi"};
+const GUN_NAME={pistol:"Yarı otomatik tabanca",revolver:"Revolver, 4 inç",revolverL:"Büyük gövdeli revolver, 6,5 inç",rifle:"Sürgülü keskin nişancı tüfeği",ak:"Otomatik tüfek, 950 m/s'ye kadar",ar15:"Otomatik tüfek, 1100 m/s'ye kadar",m4:"Karabina, 1100 m/s'ye kadar",garand:"Yarı otomatik tüfek, 1000 m/s'ye kadar",gasgun:"Ticari gaz tabancası, 1000 m/s'ye kadar",ballgun:"Pnömatik bilye atıcı",launcher:"Pnömatik top atıcı",tennis:"Tenis topu atış makinesi"};
 /* ejection port (gun local) and case size [radius, length] per gun */
 const EJECT={pistol:[[0.016,0.004,-0.06],[0.0049,0.019]],ak:[[0.02,0.012,-0.56],[0.0057,0.039]],ar15:[[0.018,0.012,-0.56],[0.0048,0.045]],m4:[[0.018,0.012,-0.44],[0.0048,0.045]],garand:[[0.0,0.03,-0.66],[0.006,0.063]]};
 const GUNS={pistol,revolver,revolverL,rifle,ak,ar15,m4,garand,gasgun,ballgun,launcher,tennis};
@@ -3300,6 +3301,7 @@ async function downloadSourceZip(){
 function versionDlg(){
   const lk=(f,t)=>`<li><a href="kaynak/${f}" target="_blank" rel="noopener">${t}</a></li>`;
   openDlg("Sürüm ve testler",`<p><b>Sürüm ${APP_VERSION}</b>, ${APP_DATE}. Kütüphane şeması ${LIB_SCHEMA}.</p>
+   <p class="note" style="margin:0 0 6px">2.12.2: atış düzeneğindeki silah adları cihaz türü ve hız sınırıyla verilir; ekrana yazılan sayılarda gerçek eksi işareti kullanılır. Çözücü değişmedi, sonuçlar aynıdır.</p>
    <p class="note" style="margin:0 0 6px">Aşağıdaki belgeler 2.0.1 sürümünün geçmiş doğrulama kayıtlarıdır; bu sürümün kaynağını içermez.</p>
    <ul class="isslist">${lk("DENETIM_RAPORU.md","2.0 denetim raporu")}${lk("REGRESYON_SONUCLARI.md","2.0.1 regresyon testi sonuçları")}${lk("KALDIRILAN_OGELER.json","2.0.1 kaldırılan öğeler listesi")}${lk("MALZEME_AKTARIM_SEMASI.md","2.0.1 malzeme aktarım şeması")}${lk("SHA256SUMS.txt","2.0.1 dosya özetleri")}</ul>
    <div class="row"><button class="sm on" id="vtRun">Öz testleri çalıştır</button></div><div id="vtOut"></div>`);
