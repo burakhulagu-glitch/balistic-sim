@@ -927,9 +927,11 @@ button.fire.resume{background:var(--green);border-color:var(--green);color:#fff;
 (function(){
 "use strict";
 const $=id=>document.getElementById(id);
-/* Ekranda gercek eksi isareti (U+2212) kullanilir; disa aktarilan CSV ve JSON ASCII kalir. */
-const fmt=(x,d=1)=>Number(x).toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/-/g,"−");
-const pct=(x,d=1)=>"%"+fmt(x*100,d);
+/* Ekranda gercek eksi isareti (U+2212) kullanilir; disa aktarilan CSV ve JSON ASCII kalir.
+   Arayuz dili Ingilizce ise ondalik ayraci nokta ve yuzde isareti sayidan sonra gelir. */
+const isEN=()=>{try{return !!(window.B3D_I18N&&window.B3D_I18N.get()==="en");}catch(e){return false;}};
+const fmt=(x,d=1)=>Number(x).toLocaleString(isEN()?"en-US":"tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d}).replace(/-/g,"−");
+const pct=(x,d=1)=>isEN()?fmt(x*100,d)+"%":"%"+fmt(x*100,d);
 const cssVar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
@@ -998,7 +1000,7 @@ const NU=0.3,G=9.81,RHO_AIR=1.225,MUZZLE=new THREE.Vector3(0,1.2,0),GUN_MASS=0.7
 /* ---------- physics ---------- */
 const isNum=x=>typeof x==="number"&&isFinite(x);
 /* ---------- veri sözleşmesi, sürüm, doğrulama ve göç (v2) ---------- */
-const APP_VERSION="2.12.3",LIB_SCHEMA="bds.material.v2",APP_DATE="27 Kasım 2026";
+const APP_VERSION="2.12.3",LIB_SCHEMA="bds.material.v2";
 const REMOVED_KEYS=["stf","mx","stfmx"];
 const THESIS_RE=/\btez\b|\bthesis\b|doktora|STF|MXene/i,THESIS_STRICT=/\btez\b|\bthesis\b|doktora/i;
 const OLD_CAL_FAKE=[{proj:"hg9",t:6,v:540},{proj:"hg9",t:8,v:620},{proj:"hg44",t:8,v:575}];
@@ -3019,7 +3021,7 @@ function aboutDlg(){
   <p><b>Arka yüz izi.</b> Mermi, dizilimden koni biçiminde kopan etkin kütleyle plastik çarpışma yapar; kalan enerji kil içinde koni krater açar. Kil akma gerilmesi standart düşürme kalibrasyonundan türetilmiştir.</p>
   <p><b>Tehditler.</b> Mühimmat ve seviye tabloları NIJ 0123.00 ve 0101.07 adlandırmasıyla girilmiştir; değerler standart metninden doğrulanmamıştır. Sonuçlar standart uyumu veya sertifikasyon göstermez.</p>
   <p><b>Varsayımlar.</b> Kaynağı gösterilmemiş tüm sabitler Yardım menüsündeki "Varsayımlar ve kaynaklar" listesindedir.</p>
-  <p><b>Sürüm.</b> ${APP_VERSION} (${APP_DATE}), kütüphane şeması ${LIB_SCHEMA}.</p>
+  <p><b>Sürüm.</b> ${APP_VERSION}, kütüphane şeması ${LIB_SCHEMA}.</p>
   <p><b>Sesler.</b> Silah sesleri The Free Firearm Sound Library kayıtlarından alınmıştır (CC0 1.0, kamu malı). Pnömatik atış ve çarpma sesleri tarayıcıda sentezlenir.</p>
   <p>Bu araç ön tasarım ve eğitim içindir; doğrulanmış sonlu elemanlar analizi ve atış testi yerine geçmez.</p>`);
 }
@@ -3300,7 +3302,7 @@ async function downloadSourceZip(){
 }
 function versionDlg(){
   const lk=(f,t)=>`<li><a href="kaynak/${f}" target="_blank" rel="noopener">${t}</a></li>`;
-  openDlg("Sürüm ve testler",`<p><b>Sürüm ${APP_VERSION}</b>, ${APP_DATE}. Kütüphane şeması ${LIB_SCHEMA}.</p>
+  openDlg("Sürüm ve testler",`<p><b>Sürüm ${APP_VERSION}</b>. Kütüphane şeması ${LIB_SCHEMA}.</p>
    <p class="note" style="margin:0 0 6px">2.12.3: ekrana yazılan sayılarda kısa tire yerine gerçek eksi işareti kullanılır; dışa aktarılan CSV ve JSON ASCII kalır. Çözücü değişmedi, sonuçlar aynıdır.</p>
    <p class="note" style="margin:0 0 6px">Aşağıdaki belgeler 2.0.1 sürümünün geçmiş doğrulama kayıtlarıdır; bu sürümün kaynağını içermez.</p>
    <ul class="isslist">${lk("DENETIM_RAPORU.md","2.0 denetim raporu")}${lk("REGRESYON_SONUCLARI.md","2.0.1 regresyon testi sonuçları")}${lk("KALDIRILAN_OGELER.json","2.0.1 kaldırılan öğeler listesi")}${lk("MALZEME_AKTARIM_SEMASI.md","2.0.1 malzeme aktarım şeması")}${lk("SHA256SUMS.txt","2.0.1 dosya özetleri")}</ul>
